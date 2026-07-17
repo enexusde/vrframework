@@ -161,7 +161,7 @@ public abstract class TextPanel implements PanelComponent {
     }
 
     public void initialize() {
-        shader = new ShaderProgram("/shaders/text_vertex.glsl", "/shaders/text_fragment.glsl");
+        shader = new ShaderProgram(TextPanel.class, "/shaders/text_vertex.glsl", "/shaders/text_fragment.glsl");
         shader.compile();
 
         // panelWidth() × panelHeight() quad (1 m × 1 m by default), CCW front face (normal = +Z, toward camera)

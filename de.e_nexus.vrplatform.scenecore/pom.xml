@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>de.e_nexus.vrplatform.scenecore</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
   <!-- Shared foundation every scene component builds on: Mesh/SceneObject
        (raw geometry), the TextPanel family (TypeableTextPanel, SingleLine/
@@ -19,7 +19,11 @@
        VRSceneContribution. None of these are standalone components a scene
        adds on their own, they're either abstract or pure data model, so
        they live below every per-component module instead of being split
-       further themselves. -->
+       further themselves.
+
+       Deployed as its own OSGi bundle; imports de.e_nexus.vrplatform.gl and
+       LWJGL/JOML at runtime instead of embedding its own copies - see
+       de.e_nexus.vrplatform.gl's pom for why. -->
 
   <dependencies>
     <dependency>
@@ -37,4 +41,23 @@
       <version>${joml.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.groupId}.scenecore</Bundle-SymbolicName>
+            <Bundle-Name>VR Platform Scene Core</Bundle-Name>
+            <Bundle-Version>${project.version}</Bundle-Version>
+            <Import-Package>*;resolution:=optional</Import-Package>
+            <_nouses>true</_nouses>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

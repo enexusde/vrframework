@@ -10,14 +10,21 @@
   </parent>
 
   <artifactId>de.e_nexus.vrplatform.gl</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
   <!-- Low-level OpenGL wrappers with no scene/engine knowledge: shader
        programs, 2D textures, and the blur/framebuffer pair the renderer
        composites eye views through. Every scene-facing module depends on
        this instead of on de.e_nexus.vrplatform.render, which is what breaks the cycle
        that used to exist when both lived in one "framework" module (scene
-       classes needed ShaderProgram; the renderer needed scene classes). -->
+       classes needed ShaderProgram; the renderer needed scene classes).
+
+       Deployed as its own OSGi bundle rather than embedded into app/demo:
+       LWJGL/JOML are not embedded here (no Embed-Dependency) so that this
+       bundle imports the single app-owned copy at runtime instead of
+       loading a second one - see app's pom for why a second copy of LWJGL
+       is unsafe (org.lwjgl.opengl.GL's process-global native capability
+       table). -->
 
   <dependencies>
     <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId></dependency>
@@ -30,4 +37,23 @@
       <version>${joml.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.groupId}.gl</Bundle-SymbolicName>
+            <Bundle-Name>VR Platform GL</Bundle-Name>
+            <Bundle-Version>${project.version}</Bundle-Version>
+            <Import-Package>*;resolution:=optional</Import-Package>
+            <_nouses>true</_nouses>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

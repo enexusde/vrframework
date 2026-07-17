@@ -29,7 +29,7 @@ public class BlurPass {
     }
 
     public void initialize() {
-        shader = new ShaderProgram("/shaders/blur_vertex.glsl", "/shaders/blur_fragment.glsl");
+        shader = new ShaderProgram(BlurPass.class, "/shaders/blur_vertex.glsl", "/shaders/blur_fragment.glsl");
         shader.compile();
 
         horizontalFbo = new EyeFramebuffer(width, height);

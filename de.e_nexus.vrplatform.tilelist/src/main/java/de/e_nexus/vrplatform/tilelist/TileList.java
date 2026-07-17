@@ -266,7 +266,7 @@ public class TileList implements PanelComponent {
     }
 
     public void initialize() {
-        shader = new ShaderProgram("/shaders/text_vertex.glsl", "/shaders/text_fragment.glsl");
+        shader = new ShaderProgram(TextPanel.class, "/shaders/text_vertex.glsl", "/shaders/text_fragment.glsl");
         shader.compile();
 
         float halfW = panelWidth / 2f;

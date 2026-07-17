@@ -13,11 +13,19 @@ import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram {
 
+    // Resolves vertexPath/fragmentPath against the caller's class rather
+    // than this class: under OSGi, this class is loaded by the gl bundle
+    // while callers (render, scenecore, skydome, ...) are typically a
+    // different bundle whose own classpath holds the .glsl resources, so
+    // getClass().getResourceAsStream would never find them - same reason
+    // Texture2D takes a resourceOwner.
+    private final Class<?> resourceOwner;
     private int programId;
     private final String vertexPath;
     private final String fragmentPath;
 
-    public ShaderProgram(String vertexPath, String fragmentPath) {
+    public ShaderProgram(Class<?> resourceOwner, String vertexPath, String fragmentPath) {
+        this.resourceOwner = resourceOwner;
         this.vertexPath   = vertexPath;
         this.fragmentPath = fragmentPath;
     }
@@ -51,7 +59,7 @@ public class ShaderProgram {
     }
 
     private String loadResource(String path) {
-        try (InputStream is = getClass().getResourceAsStream(path)) {
+        try (InputStream is = resourceOwner.getResourceAsStream(path)) {
             if (is == null) throw new RuntimeException("Shader resource not found: " + path);
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {

@@ -10,12 +10,16 @@
   </parent>
 
   <artifactId>de.e_nexus.vrplatform.render</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
   <!-- The eye-view renderer and its scene registry: opens the window,
        drives the render loop, and renders whatever VRSceneContribution the
        registry currently holds (framework's own skydome plus, in the demo,
-       whatever a consuming bundle publishes). -->
+       whatever a consuming bundle publishes).
+
+       Deployed as its own OSGi bundle; imports its de.e-nexus siblings and
+       LWJGL/JOML at runtime instead of embedding its own copies - see
+       de.e_nexus.vrplatform.gl's pom for why. -->
 
   <dependencies>
     <dependency>
@@ -51,4 +55,23 @@
       <version>${joml.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.groupId}.render</Bundle-SymbolicName>
+            <Bundle-Name>VR Platform Renderer</Bundle-Name>
+            <Bundle-Version>${project.version}</Bundle-Version>
+            <Import-Package>*;resolution:=optional</Import-Package>
+            <_nouses>true</_nouses>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

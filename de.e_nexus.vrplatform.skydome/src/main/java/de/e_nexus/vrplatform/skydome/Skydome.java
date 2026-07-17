@@ -28,7 +28,7 @@ public class Skydome {
     private ShaderProgram shader;
 
     public void initialize() {
-        shader = new ShaderProgram("/shaders/sky_vertex.glsl", "/shaders/sky_fragment.glsl");
+        shader = new ShaderProgram(Skydome.class, "/shaders/sky_vertex.glsl", "/shaders/sky_fragment.glsl");
         shader.compile();
 
         float[] verts = buildSphereVertices();

@@ -15,12 +15,15 @@
   <!-- Thin OSGi aggregator: just the standalone-app entry point
        (VRPlatform/VRPlatformApplication) and the bundle Activator. The
        actual engine (rendering, HMD access, scene primitives, the
-       text-panel widget toolkit) now lives in separate per-concern modules
+       text-panel widget toolkit) lives in separate per-concern modules
        (de.e_nexus.vrplatform.render, de.e_nexus.vrplatform.vr, de.e_nexus.vrplatform.gl, de.e_nexus.vrplatform.scenecore
-       and one module per scene component) that this module depends on and,
-       via Embed-Dependency below, still bundles into a single OSGi jar,
-       so the OSGi/Karaf deployment story is unchanged even though the
-       source now lives in many Maven modules.
+       and one module per scene component), each deployed as its own OSGi
+       bundle jar rather than embedded here - so Karaf ends up installing
+       one jar per module instead of a couple of fat ones. This module's
+       Embed-Dependency (below) is now scoped to the third-party libraries
+       it is the sole owner/exporter of (LWJGL, JOML, Weld/CDI,
+       jakarta.inject); the de.e-nexus sibling modules are imported at
+       runtime instead.
 
        Also a standalone runnable app in its own right (skydome only, no
        demo content): inherits exec.skip=true from the root pom, so this
@@ -70,24 +73,29 @@
 
   <build>
     <plugins>
-      <!-- Bundles all of the above (LWJGL + natives, JOML, Weld/CDI, jakarta.inject)
-           straight into this jar so it's a single self-contained OSGi bundle for
-           Karaf, instead of relying on Karaf to separately provision each one.
+      <!-- Bundles only the third-party libraries this bundle is the sole
+           owner/exporter of (LWJGL + natives, JOML, Weld/CDI, jakarta.inject)
+           straight into this jar, instead of relying on Karaf to separately
+           provision each one. The de.e-nexus sibling modules (render, vr,
+           scenecore, gl, skydome, and the scene-component modules) are each
+           their own OSGi bundle now and are wired in via Import-Package
+           below, not embedded here.
            JOML/jakarta.inject/CDI are re-exported (not just embedded) because
-           demo's classes hold direct references to their types (JOML matrices in
-           method signatures, @Inject-annotated constructors, the CDI SeContainer
-           API used to bootstrap the container) - if demo embedded its own separate
-           copies instead of importing framework's, those would be different classes
-           to the JVM despite the same name, breaking both type-checked calls and
-           CDI's annotation-based bean resolution.
+           sibling bundles hold direct references to their types (JOML matrices
+           in method signatures, @Inject-annotated constructors, the CDI
+           SeContainer API used to bootstrap the container) - if a sibling
+           embedded its own separate copy instead of importing this bundle's,
+           those would be different classes to the JVM despite the same name,
+           breaking both type-checked calls and CDI's annotation-based bean
+           resolution.
            LWJGL *is* re-exported despite being used procedurally rather than as an
            API type: org.lwjgl.opengl.GL's native capability table is process-global
            (see ThreadLocalUtil), not per-classloader, so a second bundle embedding
            its own private copy and initializing its own GL/GL11 classes collides
            with this bundle's already-initialized one ("IllegalStateException:
-           setFunctionMissingAddresses has been called already"). Demo and its
-           scene-component modules must import this bundle's LWJGL classes instead
-           of embedding their own. -->
+           setFunctionMissingAddresses has been called already"). Every sibling
+           bundle must import this bundle's LWJGL classes instead of embedding
+           their own. -->
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -99,11 +107,11 @@
             <Bundle-Version>${project.version}</Bundle-Version>
             <Bundle-Activator>de.e_nexus.vrplatform.app.Activator</Bundle-Activator>
             <Main-Class>de.e_nexus.vrplatform.app.VRPlatform</Main-Class>
-            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+            <Embed-Dependency>groupId=org\.lwjgl|org\.joml|org\.jboss\.weld\.se|jakarta\.inject;scope=compile|runtime</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
             <Embed-Directory>lib</Embed-Directory>
             <Export-Package>
-              de.e_nexus.vrplatform.*;version=${project.version},
+              de.e_nexus.vrplatform.app;version=${project.version},
               org.joml;version=${joml.version},
               org.lwjgl.*;version=${lwjgl.version},
               jakarta.inject;version=${jakarta-inject.version},

@@ -10,7 +10,10 @@
   </parent>
 
   <artifactId>de.e_nexus.vrplatform.checkbox</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
+
+  <!-- Deployed as its own OSGi bundle; imports de.e_nexus.vrplatform.scenecore
+       at runtime instead of embedding it. -->
 
   <dependencies>
     <dependency>
@@ -19,4 +22,23 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.groupId}.checkbox</Bundle-SymbolicName>
+            <Bundle-Name>VR Platform Checkbox</Bundle-Name>
+            <Bundle-Version>${project.version}</Bundle-Version>
+            <Import-Package>*;resolution:=optional</Import-Package>
+            <_nouses>true</_nouses>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

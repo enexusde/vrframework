@@ -122,30 +122,23 @@
 
   <build>
     <plugins>
-      <!-- Embeds the demo-exclusive scene-component modules (checkbox/cube/
-           cuboidframe/cylinder/texturedcube/terminal/tilelist, and terminal's
-           own pty4j, plus two of pty4j's transitive deps that turn out to be
-           needed at runtime rather than just compile-time even though they
-           looked skippable at first: kotlin-stdlib (Command.kt's null-check
-           helpers) and jna/jna-platform (PtyProcessBuilder.start's actual
-           ConPTY spawn on Windows, not just its Windows-specific branches).
-           slf4j-api and the jetbrains annotations are still left out: the
-           former is expected from Karaf's own pax-logging export, the latter
-           is compile-only (SOURCE/CLASS retention, never touched at
-           runtime). None of these are consumed by any other bundle, so
-           there's no type-identity concern in embedding private copies.
-           scenecore/gl/vr/render stay excluded and must come from the app
-           bundle's exports instead (see its pom for why - duplicate embedded
-           copies would be distinct classes to the JVM and break both typed
-           calls into app's API and CDI's bean wiring). LWJGL is excluded for
-           the same reason, despite being used procedurally rather than as an
-           API type: org.lwjgl.opengl.GL's native capability table is
-           process-global (see ThreadLocalUtil), not per-classloader, so a
-           second embedded copy initializing its own GL/GL11 classes here
-           collides with app's already-initialized one
-           ("IllegalStateException: setFunctionMissingAddresses has been
-           called already") the moment any embedded scene component touches
-           an OpenGL constant. -->
+      <!-- All de.e-nexus sibling modules this demo uses - scenecore/gl/vr/
+           render plus the demo-exclusive scene components (checkbox/cube/
+           cuboidframe/cylinder/texturedcube/terminal/tilelist) - are each
+           their own OSGi bundle now and come in via Import-Package below
+           instead of being embedded here; Karaf ends up installing one jar
+           per module instead of a couple of fat ones. Terminal's own pty4j
+           (plus its kotlin-stdlib/jna/jna-platform runtime deps) is embedded
+           in the terminal bundle itself now, not here - see its pom.
+           LWJGL/JOML must still come from the app bundle's exports (see its
+           pom for why: org.lwjgl.opengl.GL's native capability table is
+           process-global, not per-classloader, so a second embedded copy
+           here would collide with app's already-initialized one).
+           org.osgi.util.tracker is still embedded directly: it's a small
+           third-party utility (ServiceTracker, waiting for the framework
+           bundle's SceneRegistry service in case demo starts before
+           framework does) that isn't guaranteed to be part of Karaf's own
+           bundle set the way osgi.core is, so it can't be assumed provided. -->
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -157,8 +150,7 @@
             <Bundle-Version>${project.version}</Bundle-Version>
             <Bundle-Activator>de.e_nexus.vrplatform.demo.osgi.Activator</Bundle-Activator>
             <Main-Class>de.e_nexus.vrplatform.demo.VRPlatform</Main-Class>
-            <Embed-Dependency>groupId=org.osgi;scope=compile|runtime,artifactId=de\.e_nexus\.vrplatform\.(checkbox|cube|cuboidframe|cylinder|texturedcube|terminal|tilelist)|pty4j|kotlin-stdlib|jna|jna-platform;scope=compile|runtime</Embed-Dependency>
-            <Embed-Transitive>true</Embed-Transitive>
+            <Embed-Dependency>groupId=org.osgi;scope=compile|runtime</Embed-Dependency>
             <Embed-Directory>lib</Embed-Directory>
             <Import-Package>*;resolution:=optional</Import-Package>
             <_nouses>true</_nouses>

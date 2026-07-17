@@ -9,7 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>de.e_nexus.vrplatform.numberedtextpanel</artifactId>
+  <artifactId>de.e_nexus.vrplatform.scrollbox</artifactId>
   <packaging>bundle</packaging>
 
   <!-- Deployed as its own OSGi bundle; imports de.e_nexus.vrplatform.scenecore
@@ -31,8 +31,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>${project.groupId}.numberedtextpanel</Bundle-SymbolicName>
-            <Bundle-Name>VR Platform Numbered Text Panel</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.scrollbox</Bundle-SymbolicName>
+            <Bundle-Name>VR Platform Scroll Box</Bundle-Name>
             <Bundle-Version>${project.version}</Bundle-Version>
             <Import-Package>*;resolution:=optional</Import-Package>
             <_nouses>true</_nouses>

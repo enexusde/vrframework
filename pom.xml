@@ -19,6 +19,7 @@
     <module>de.e_nexus.vrplatform.terminal</module>
     <module>de.e_nexus.vrplatform.numberedtextpanel</module>
     <module>de.e_nexus.vrplatform.tilelist</module>
+    <module>de.e_nexus.vrplatform.scrollbox</module>
     <module>de.e_nexus.vrplatform.skydome</module>
     <module>de.e_nexus.vrplatform.render</module>
     <module>de.e_nexus.vrplatform.app</module>

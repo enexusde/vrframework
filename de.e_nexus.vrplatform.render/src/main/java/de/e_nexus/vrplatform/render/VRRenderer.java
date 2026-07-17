@@ -190,10 +190,10 @@ public class VRRenderer {
         blurPass = new BlurPass(eyeW, eyeH);
         blurPass.initialize();
 
-        shader = new ShaderProgram("/shaders/vertex.glsl", "/shaders/fragment.glsl");
+        shader = new ShaderProgram(VRRenderer.class, "/shaders/vertex.glsl", "/shaders/fragment.glsl");
         shader.compile();
 
-        texturedShader = new ShaderProgram("/shaders/textured_vertex.glsl", "/shaders/textured_fragment.glsl");
+        texturedShader = new ShaderProgram(VRRenderer.class, "/shaders/textured_vertex.glsl", "/shaders/textured_fragment.glsl");
         texturedShader.compile();
 
         skydome.initialize();

@@ -10,11 +10,16 @@
   </parent>
 
   <artifactId>de.e_nexus.vrplatform.terminal</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
   <!-- Depends on de.e_nexus.vrplatform.cuboidframe for FrameElement: Terminal.panel()
        exposes its single terminal grid panel as a FrameElement so it can sit
-       in a CuboidFrame's layout tree. -->
+       in a CuboidFrame's layout tree.
+
+       Deployed as its own OSGi bundle; imports scenecore/cuboidframe at
+       runtime instead of embedding them, but embeds pty4j (see
+       Embed-Dependency below) since it's this module's exclusive
+       dependency and not something any sibling bundle can export. -->
 
   <dependencies>
     <dependency>
@@ -37,4 +42,36 @@
       <version>0.13.10</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Embeds pty4j and two of its transitive deps that turn out to be
+           needed at runtime rather than just compile-time even though they
+           looked skippable at first: kotlin-stdlib (Command.kt's null-check
+           helpers) and jna/jna-platform (PtyProcessBuilder.start's actual
+           ConPTY spawn on Windows, not just its Windows-specific branches).
+           slf4j-api and the jetbrains annotations are left out: the former
+           is expected from Karaf's own pax-logging export, the latter is
+           compile-only (SOURCE/CLASS retention, never touched at runtime).
+           None of these are consumed by any other bundle, so there's no
+           type-identity concern in embedding a private copy here. -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.groupId}.terminal</Bundle-SymbolicName>
+            <Bundle-Name>VR Platform Terminal</Bundle-Name>
+            <Bundle-Version>${project.version}</Bundle-Version>
+            <Embed-Dependency>artifactId=pty4j|kotlin-stdlib|jna|jna-platform;scope=compile|runtime</Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+            <Embed-Directory>lib</Embed-Directory>
+            <Import-Package>*;resolution:=optional</Import-Package>
+            <_nouses>true</_nouses>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -10,9 +10,13 @@
   </parent>
 
   <artifactId>de.e_nexus.vrplatform.vr</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
-  <!-- HMD access (OpenVR) only, no scene or renderer knowledge. -->
+  <!-- HMD access (OpenVR) only, no scene or renderer knowledge.
+
+       Deployed as its own OSGi bundle; LWJGL/JOML are not embedded here
+       (no Embed-Dependency) so this bundle imports the single app-owned
+       copy at runtime - see app's pom for why. -->
 
   <dependencies>
     <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId></dependency>
@@ -25,4 +29,23 @@
       <version>${joml.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.groupId}.vr</Bundle-SymbolicName>
+            <Bundle-Name>VR Platform HMD Access</Bundle-Name>
+            <Bundle-Version>${project.version}</Bundle-Version>
+            <Import-Package>*;resolution:=optional</Import-Package>
+            <_nouses>true</_nouses>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
