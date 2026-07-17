@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>de.e-nexus</groupId>
+    <artifactId>vrplatform</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>de.e_nexus.vrplatform.render</artifactId>
+  <packaging>jar</packaging>
+
+  <!-- The eye-view renderer and its scene registry: opens the window,
+       drives the render loop, and renders whatever VRSceneContribution the
+       registry currently holds (framework's own skydome plus, in the demo,
+       whatever a consuming bundle publishes). -->
+
+  <dependencies>
+    <dependency>
+      <groupId>de.e-nexus</groupId>
+      <artifactId>de.e_nexus.vrplatform.scenecore</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.e-nexus</groupId>
+      <artifactId>de.e_nexus.vrplatform.gl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.e-nexus</groupId>
+      <artifactId>de.e_nexus.vrplatform.vr</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.e-nexus</groupId>
+      <artifactId>de.e_nexus.vrplatform.skydome</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId></dependency>
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId><classifier>natives-windows</classifier><scope>runtime</scope></dependency>
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId></dependency>
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId><classifier>natives-windows</classifier><scope>runtime</scope></dependency>
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId></dependency>
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId><classifier>natives-windows</classifier><scope>runtime</scope></dependency>
+    <dependency>
+      <groupId>org.joml</groupId>
+      <artifactId>joml</artifactId>
+      <version>${joml.version}</version>
+    </dependency>
+  </dependencies>
+</project>

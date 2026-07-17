@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>de.e-nexus</groupId>
+  <artifactId>vrplatform</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>de.e_nexus.vrplatform.gl</module>
+    <module>de.e_nexus.vrplatform.vr</module>
+    <module>de.e_nexus.vrplatform.scenecore</module>
+    <module>de.e_nexus.vrplatform.cube</module>
+    <module>de.e_nexus.vrplatform.texturedcube</module>
+    <module>de.e_nexus.vrplatform.cuboidframe</module>
+    <module>de.e_nexus.vrplatform.cylinder</module>
+    <module>de.e_nexus.vrplatform.checkbox</module>
+    <module>de.e_nexus.vrplatform.terminal</module>
+    <module>de.e_nexus.vrplatform.numberedtextpanel</module>
+    <module>de.e_nexus.vrplatform.tilelist</module>
+    <module>de.e_nexus.vrplatform.skydome</module>
+    <module>de.e_nexus.vrplatform.render</module>
+    <module>de.e_nexus.vrplatform.app</module>
+    <module>de.e_nexus.vrplatform.demo</module>
+  </modules>
+
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <!-- Without this, javac reads sources with the platform encoding
+         (Cp1252 on this Windows box), which corrupts non-Latin literals
+         (Japanese/Arabic/etc.) in demo content classes. -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <lwjgl.version>3.3.4</lwjgl.version>
+    <joml.version>1.10.7</joml.version>
+    <jakarta-inject.version>2.0.1</jakarta-inject.version>
+    <weld.version>6.0.2.Final</weld.version>
+    <osgi.version>8.0.0</osgi.version>
+    <osgi-tracker.version>1.5.4</osgi-tracker.version>
+    <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
+
+    <!-- exec:java is invoked directly (see defaultGoal below), so Maven tries
+         to run it in every reactor module. mainClass is a required plugin
+         parameter checked before any skip logic runs, so it must resolve
+         everywhere (harmless where skip=true, since the class is then never
+         actually loaded); only the demo module overrides skip back to false. -->
+    <exec.mainClass>de.e_nexus.vrplatform.demo.VRPlatform</exec.mainClass>
+    <exec.skip>true</exec.skip>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.lwjgl</groupId>
+        <artifactId>lwjgl-bom</artifactId>
+        <version>${lwjgl.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <defaultGoal>clean install exec:java</defaultGoal>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.3.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>${maven-bundle-plugin.version}</version>
+          <extensions>true</extensions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

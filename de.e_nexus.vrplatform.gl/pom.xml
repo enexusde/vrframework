@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>de.e-nexus</groupId>
+    <artifactId>vrplatform</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>de.e_nexus.vrplatform.gl</artifactId>
+  <packaging>jar</packaging>
+
+  <!-- Low-level OpenGL wrappers with no scene/engine knowledge: shader
+       programs, 2D textures, and the blur/framebuffer pair the renderer
+       composites eye views through. Every scene-facing module depends on
+       this instead of on de.e_nexus.vrplatform.render, which is what breaks the cycle
+       that used to exist when both lived in one "framework" module (scene
+       classes needed ShaderProgram; the renderer needed scene classes). -->
+
+  <dependencies>
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId></dependency>
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId><classifier>natives-windows</classifier><scope>runtime</scope></dependency>
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId></dependency>
+    <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId><classifier>natives-windows</classifier><scope>runtime</scope></dependency>
+    <dependency>
+      <groupId>org.joml</groupId>
+      <artifactId>joml</artifactId>
+      <version>${joml.version}</version>
+    </dependency>
+  </dependencies>
+</project>
